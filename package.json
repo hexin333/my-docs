@@ -1,0 +1,20 @@
+{
+  "name": "vitepress-project",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "dev:docs": "vitepress dev docs",
+    "build:docs": "vitepress build docs",
+    "preview:docs": "vitepress preview docs"
+  },
+  "author": "hexin",
+  "license": "ISC",
+  "devDependencies": {
+    "vitepress": "^1.6.4"
+  },
+  "engines": {
+    "node": ">=22.23.1",
+    "npm": ">=10.9.8"
+  }
+}

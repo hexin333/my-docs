@@ -1,0 +1,23 @@
+:root {
+  /* 将 name 文字颜色设为透明，配合背景渐变实现渐变文字效果 */
+  --vp-home-hero-name-color: transparent;
+
+  /* 渐变色配置：从紫色 → 蓝色 → 绿色，可自行调整颜色和角度 */
+  --vp-home-hero-name-background: linear-gradient(
+    135deg,
+    #8b5cf6 0%,
+    #3b82f6 50%,
+    #10b981 100%
+  );
+
+  /* 图片背景渐变光晕 */
+  --vp-home-hero-image-background-image: linear-gradient(
+    135deg,
+    #8b5cf6 0%,
+    #3b82f6 50%,
+    #10b981 100%
+  );
+
+  /* 模糊扩散效果，让光晕更自然；数值越大越模糊 */
+  --vp-home-hero-image-filter: blur(72px);
+}
