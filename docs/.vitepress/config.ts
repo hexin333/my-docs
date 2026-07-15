@@ -8,6 +8,7 @@ export default defineConfig({
       open: false
     }
   },
+  base: '/my-docs/', // 此处与github仓库名保持一致
   // ======= 应用级配置选项 =======
   lang: 'zh-CN',
   title: '我的文档',

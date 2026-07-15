@@ -78,3 +78,18 @@ visible 默认溢出显示；hidden 裁剪无滚动；scroll 始终有滚动条�
 - `visibility: hidden` 隐藏元素，但保留其占据的空间，内容变化会重新渲染
 
 :::
+
+## 关于flex-grow、flex-shrink、flex-basis
+
+::: details 详情
+| 属性 | 作用 | 默认值 |
+| ------------- | ---------------------- | --------- |
+| `flex-grow` | **放大**：分配容器的**剩余空间** | `0`（不放大） |
+| `flex-shrink` | **缩小**：容器空间不足时**压缩自身** | `1`（允许压缩） |
+| `flex-basis` | **基础尺寸**：元素在分配前的默认大小 | `auto` 或者长度单位（1px、1rem、等）或者百分比 |
+
+- `flex-grow` 放大是**剩余空间**（总空间减去每个`flex-basis`计算得到的空间）**乘以** `flex-grow` 的比例系数。默认是0不放大。
+- `flex-shrink` 缩小是**超出空间**（每个`flex-basis`计算得到的空间减去总空间）**乘以** 真正缩放比例（(元素A的`flex-shrink` \* `flex-basis` / 所有元素的 `flex-basis` \* `flex-basis`相加) \* 超出空间 ）。默认是1要缩小。
+- `flex-basis` 的值设置为auto时，所占大小就是元素的宽度或者高度
+- 当一个元素同时被设置了 `flex-basis` (除值为 auto 外) 和 `width` (或者在 flex-direction: column 情况下设置了height) , `flex-basis` 具有更高的优先级。
+:::
