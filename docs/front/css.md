@@ -79,7 +79,7 @@ visible 默认溢出显示；hidden 裁剪无滚动；scroll 始终有滚动条�
 
 :::
 
-## 关于flex-grow、flex-shrink、flex-basis
+## 关于`flex-grow` `flex-shrink` `flex-basis`
 
 ::: details 详情
 | 属性 | 作用 | 默认值 |

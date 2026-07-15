@@ -6,7 +6,7 @@ hero:
   text: 前后端知识系统总结
   tagline: 了解更多...
   image:
-    src: /logo.png
+    src: /logo.webp
     alt: 知识库
   actions:
     - theme: brand

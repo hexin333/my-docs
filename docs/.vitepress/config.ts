@@ -13,12 +13,12 @@ export default defineConfig({
   lang: 'zh-CN',
   title: '我的文档',
   head: [
-    ['link', { rel: 'icon', href: '/logo.png' }]
+    ['link', { rel: 'icon', href: '/logo.webp' }]
   ],
   description: '记录一些前后端以及AI相关的知识',
   // ======= 主题级配置选项 =======
   themeConfig: {
-    logo: '/logo.png',
+    logo: '/logo.webp',
     siteTitle: '我的文档',
     aside: true,
     outline: {
