@@ -59,8 +59,10 @@ export const getType = (value: any): GetType => {
   // 注意：NaN需要特别判断，这里不推荐使用isNaN()，isNaN()会将传入的参数转换为数字类型，然后再进行比较
   // 例如：isNaN('abc') => true，isNaN('123') => false
   if (Number.isNaN(value)) return 'NaN'
-  return Object.prototype.toString.call(value).slice(8, -1).toLowerCase() as GetType
+  return Object.prototype.toString.call(value).slice(8, -1).toLocaleLowerCase() as GetType
 }
+
+// 转大写 toLocaleUpperCase()
 ```
 
 :::
@@ -496,4 +498,72 @@ child.sayHello() // "Hello from Parent"
 
 ✅ **优点：** 语法更清晰，易读易用  
 ❌ **缺点：** 本质仍是 `prototype` 继承
+:::
+
+## 页面埋点
+
+::: details 详情
+| 指标 | 全称 | 中文 | 类型 | 统计对象 | 去重 | 触发时机 | 典型指标 | 分析目的 |
+| ------ | -------------- | ----- | ---- | ------ | ----- | ------------ | -------------- | ---------- |
+| **PE** | Page Event | 页面事件 | 埋点类型 | 页面维度 | — | 页面加载/可见/离开 | PV、UV、停留时长、跳出率 | 流量分析、转化漏斗 |
+| **UE** | User Event | 用户事件 | 埋点类型 | 用户交互 | — | 点击、输入、滑动、提交 | 点击率、转化率、功能使用频次 | 用户行为、功能分析 |
+| **PV** | Page View | 页面浏览量 | 流量指标 | 页面访问次数 | ❌ 不去重 | 每次打开/刷新页面 | 总访问次数 | 页面热度、内容吸引力 |
+| **UV** | Unique Visitor | 独立访客 | 流量指标 | 独立用户数 | ✅ 去重 | 同一天内同一用户只算1次 | 真实用户规模 | 用户规模、活跃度 |
+
+一般做法：封装一个 Tracker 类，PE 自动监听页面生命周期（load/beforeunload/路由变化），UE 通过事件委托监听点击、IntersectionObserver 监听曝光，支持 data-track 属性自动采集和手动 track 上报，批量发送数据到服务端。
+
+:::
+
+## 性能监控
+
+::: details 详情
+| API/技术 | 用途 | 关键方法/事件 | 监控指标 |
+|---------|---------|------------|---------|
+| **PerformanceNavigationTiming** | 基础性能计时 | `performance.getEntriesByType('navigation')` | DNS查询时间、TCP连接耗时、TTFB首字节耗时、DOMReady解析dom树耗时、Load页面加载完成时间 |
+| **XMLHttpRequest.prototype.send** | 拦截网络请求 | 重写 `open` + `send`，监听 `loadend` | 请求URL、请求方法、HTTP状态码、请求耗时、请求体大小 |
+| **console.error** | 捕获手动打印的错误 | 重写 `console.error` | 错误信息、堆栈、发生时间 |
+| **window.onerror / addEventListener('error')** | 捕获JS运行时错误 | `window.addEventListener('error', handler)` | 错误信息、文件名、行号、列号、错误堆栈 |
+| **unhandledrejection** | 捕获未处理的Promise异常 | `window.addEventListener('unhandledrejection', handler)` | rejection原因、堆栈、发生时间 |
+| **error事件捕获阶段** | 捕获资源加载错误 | `window.addEventListener('error', handler, true)` | 资源URL、标签类型（img/script/link）、错误类型 |
+| **Vue.config.errorHandler** | 捕获Vue组件错误 | `Vue.config.errorHandler = (err, vm, info) => {}` | 错误信息、组件实例、生命周期钩子、错误堆栈 |
+| **Vue.config.warnHandler** | 捕获Vue警告 | `Vue.config.warnHandler = (msg, vm, trace) => {}` | 警告信息、组件实例、组件树追踪 |
+| **Vue Router onError** | 捕获路由错误 | `router.onError(handler)` | 路由路径、导航失败原因 |
+
+:::
+
+## JS的浅拷贝和深拷贝
+
+JS 中浅拷贝和深拷贝的核心区别在于引用类型数据的复制层级。  
+也就是对于引用类型，浅拷贝是复制引用地址，深拷贝是递归复制所有层级。
+
+::: details 详情
+| | 浅拷贝 | 深拷贝 |
+| --------------- | ------ | -------- |
+| **基本类型** | 复制值 | 复制值 |
+| **引用类型（对象/数组）** | 复制引用地址 | 递归复制所有层级 |
+| **修改嵌套对象** | 原数据受影响 | 完全独立 |
+| **性能** | 快 | 慢（递归） |
+| **循环引用** | 不处理 | 需特殊处理 |
+
+对象的Object.assign，数组的slice，concat，扩展运算等，都是浅拷贝
+
+```js
+// 1. Object.assign()
+const obj = { a: 1, b: { c: 2 } };
+const shallow1 = Object.assign({}, obj);
+
+// 2. 展开运算符
+const shallow2 = { ...obj };
+
+// 3. 数组方法
+const arr = [1, [2, 3]];
+const arrShallow = arr.slice();      // 浅拷贝
+const arrShallow2 = [...arr];        // 浅拷贝
+const arrShallow3 = arr.concat();    // 浅拷贝
+
+// 验证：嵌套对象共享引用
+shallow1.b.c = 999;
+console.log(obj.b.c);  // 999 ← 原数据被修改！
+```
+
 :::

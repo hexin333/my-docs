@@ -92,4 +92,19 @@ visible 默认溢出显示；hidden 裁剪无滚动；scroll 始终有滚动条�
 - `flex-shrink` 缩小是**超出空间**（每个`flex-basis`计算得到的空间减去总空间）**乘以** 真正缩放比例（(元素A的`flex-shrink` \* `flex-basis` / 所有元素的 `flex-basis` \* `flex-basis`相加) \* 超出空间 ）。默认是1要缩小。
 - `flex-basis` 的值设置为auto时，所占大小就是元素的宽度或者高度
 - 当一个元素同时被设置了 `flex-basis` (除值为 auto 外) 和 `width` (或者在 flex-direction: column 情况下设置了height) , `flex-basis` 具有更高的优先级。
+
+:::
+
+## 文本溢出显示省略号
+
+::: details 详情
+
+```
+overflow: hidden;
+text-overflow: ellipsis;
+white-space: nowrap; // 处理元素中的空白，这里是使得换行符无效
+
+```
+补充：`letter-spacing`添加字符之间的空白（后面跟长度单位px、rem等）。`word-spacing`添加每个单词之间的空白（后面跟长度单位px、rem等）。`word-spacing`对中文无效。
+
 :::
