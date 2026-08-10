@@ -549,21 +549,73 @@ JS 中浅拷贝和深拷贝的核心区别在于引用类型数据的复制层�
 
 ```js
 // 1. Object.assign()
-const obj = { a: 1, b: { c: 2 } };
-const shallow1 = Object.assign({}, obj);
+const obj = { a: 1, b: { c: 2 } }
+const shallow1 = Object.assign({}, obj)
 
 // 2. 展开运算符
-const shallow2 = { ...obj };
+const shallow2 = { ...obj }
 
 // 3. 数组方法
-const arr = [1, [2, 3]];
-const arrShallow = arr.slice();      // 浅拷贝
-const arrShallow2 = [...arr];        // 浅拷贝
-const arrShallow3 = arr.concat();    // 浅拷贝
+const arr = [1, [2, 3]]
+const arrShallow = arr.slice() // 浅拷贝
+const arrShallow2 = [...arr] // 浅拷贝
+const arrShallow3 = arr.concat() // 浅拷贝
 
 // 验证：嵌套对象共享引用
-shallow1.b.c = 999;
-console.log(obj.b.c);  // 999 ← 原数据被修改！
+shallow1.b.c = 999
+console.log(obj.b.c) // 999 ← 原数据被修改！
+```
+
+:::
+
+## 浏览器的缓存
+
+浏览器缓存的本质是用空间换时间——将已下载的资源（JS、CSS、图片等）保存在本地（内存或磁盘），下次访问时优先复用，减少网络往返、降低服务器压力、加速页面渲染。
+
+::: details 详情
+
+- 强缓存 vs 协商缓存
+  | 维度 | 强缓存 | 协商缓存 |
+  | ------------ | --------------- | --------------- |
+  | **核心逻辑** | 浏览器自己算时间，没过期就直接用 | 过期后问服务器，资源没变就继续用 |
+  | **是否发请求到服务器** | **不发请求** | **发请求**（仅做验证，不下载文件） |
+  | **命中后状态码** | `200 (from memory cache)` 或 `200 (from disk cache)` | `304 Not Modified` |
+  | **命中后响应体** | 无（读本地） | **无**（读本地） |
+  | **未命中时状态码** | 走协商缓存或直接 `200`（重新下载） | `200`（返回新资源 + 新缓存头） |
+  | **控制头 / 响应头（服务端设置）** | `Cache-Control: max-age=3600`指定资源在缓存中的最大存储时间（秒）<br>`Expires: Wed, 21 Oct 2026 07:28:00 GMT`（HTTP/1.0遗留）<br>`Cache-Control: immutable`声明资源在有效期内不会改变 | `Last-Modified: Wed, 21 Oct 2025 07:28:00 GMT`<br>`ETag: "33a64df5"` |
+  | **请求头（浏览器自动携带）** | 无 | `If-Modified-Since: Wed, 21 Oct 2025 07:28:00 GMT`<br>`If-None-Match: "33a64df5"` |
+  | **验证方式** | 对比当前时间与响应头里的过期时间 | 服务器对比 `ETag` 指纹或 `Last-Modified` 时间（一般是验证ETag资源标识，精确验证） |
+  | **优先级** | 先检查 | 强缓存失效后才进入协商缓存 |
+  | **性能** | 最优（0ms 网络耗时） | 次优（有 1 次 RTT 往返，但不下载 body） |
+  | **适用资源** | 不常变的静态资源（JS、CSS、图片） | 可能更新但希望节省带宽的资源（HTML、API） |
+
+:::
+
+## JS中的new
+
+`new` 在 JavaScript 中的本质作用是：创建一个用户定义的对象类型的实例，或者内置对象的实例。它不是一个方法调用，而是一个一元运算符，内部有一套固定的对象创建协议。
+
+::: details 详情
+| 步骤 | 动作 | 代码等价表达 |
+| ------------- | -------------- | ------------------- |
+| **1. 创建空对象** | 在内存中开辟一块空间，生成一个原始的空对象 `{}` | `const obj = {}` |
+| **2. 链接原型** | 将这个空对象的 `[[Prototype]]`（即 `__proto__`）指向构造函数的 `prototype` 属性 | `Object.setPrototypeOf(obj, Foo.prototype)` |
+| **3. 绑定 this 并执行** | 将构造函数内部的 `this` 指向这个新对象，然后执行构造函数体，给对象添加属性和方法 | `Foo.apply(obj, [1, 2])` |
+| **4. 返回对象** | 判断构造函数的返回值：如果返回的是**对象或函数**，则返回该值；否则返回步骤 1 创建的新对象 | `return (typeof result === 'object' && result !== null) \|\| typeof result === 'function' ? result : obj` |
+
+注意：如果构造函数显示的返回一个对象会怎么样？
+
+这会导致实例无法继承构造函数的原型，这是一个非常严重的工程隐患。所以在实际开发中，除非你明确要做 “工厂模式”，否则永远不要在构造函数中显式返回引用类型。
+
+```js
+function Test() {
+  this.a = 1
+  return { b: 2 } // 显式返回了一个新对象
+}
+const t = new Test()
+console.log(t.a) // undefined（因为新对象被丢弃了）
+console.log(t.b) // 2（返回的是那个 {b: 2}）
+console.log(t instanceof Test) // false（因为返回的对象原型链不指向 Test.prototype）
 ```
 
 :::
