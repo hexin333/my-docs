@@ -51,6 +51,7 @@ export default defineConfig({
             { text: 'JavaScript', link: '/front/js' },
             { text: 'TypeScript', link: '/front/ts' },
             { text: 'HTTP', link: '/front/http' },
+            { text: 'Scene', link: '/front/scene' },
           ]
         },
         {
