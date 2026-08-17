@@ -87,22 +87,22 @@ watchEffect(() => {
 ::: details 详情
 从组件的创建到挂载到页面，再到组件的更新和销毁，每个阶段都有特定的任务和职责。
 
-- 组件实例创建
+- 组件实例创建  
   当我们第一次访问页面时，Vue创建组件实例，解析props、data、methods等属性方法，在组合式API中，执行 setup()。
 
-- 响应式系统建立
+- 响应式系统建立  
   基于 Proxy 实现 reactive、ref，建立依赖收集和触发更新机制，props 传递时自动响应式处理。
 
-- 模板编译与渲染
+- 模板编译与渲染  
   将 template 编译为渲染函数，Vue 3 通过 静态提升等方式优化性能，Vite 预编译 SFC（单文件组件）。
 
-- DOM 挂载
+- DOM 挂载  
   执行渲染函数生成 VNode，通过 Patch 算法 转换为真实 DOM 并插入页面，同时初始化子组件。mounted（Options API）或 onMounted（Composition API）触发，可进行 DOM 操作
 
-- 响应式更新
+- 响应式更新  
   状态变更触发 Diff 算法 计算最小 DOM 更新，beforeUpdate、updated（Options API）或 onBeforeUpdate、onUpdated（Composition API）执行相应逻辑。
 
-- 组件销毁
+- 组件销毁  
   移除 DOM，清理副作用（解绑事件、销毁 watcher、清理 effect），递归卸载子组件，触发 beforeUnmount、unmounted（Options API）或 onBeforeUnmount、onUnmounted（Composition API）。
 
 :::
@@ -112,13 +112,13 @@ watchEffect(() => {
 ::: details 详情
 Vue 的模板编译过程是将开发者编写的模板语法（例如 和 v-bind 等）转换为 JavaScript 代码的过程。它主要分为三个阶段：模板解析、AST优化 和 代码生成
 
-- 模板解析
+- 模板解析  
   Vue 使用其解析器将 HTML 模板转换为 抽象语法树（AST）。在这个阶段，Vue 会分析模板中的标签、属性和指令，生成一颗树形结构。每个节点表示模板中的一个元素或属性
 
-- AST优化
+- AST优化  
   Vue 在生成渲染函数前，会对 AST 进行优化。优化的核心目标是标记 静态节点，在渲染时，Vue 可以跳过这些静态节点，提升性能。
 
-- 代码生成
+- 代码生成  
   生成渲染函数是编译的最终阶段，这个阶段会将优化后的 AST 转换成 JavaScript 渲染函数。
 
 :::
